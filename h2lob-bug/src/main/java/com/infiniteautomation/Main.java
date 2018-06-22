@@ -79,7 +79,7 @@ public class Main {
     }
     
     public static String getUrl() {
-        return "jdbc:h2:" + baseTestDir.getAbsolutePath() + "/databases/h2-test;MV_STORE=FALSE";
+        return "jdbc:h2:" + baseTestDir.getAbsolutePath() + "/databases/h2-test;LOB_TIMEOUT=0;MV_STORE=FALSE";
     }
 
     public static void updateRow(int id, Map<String, Object> rtData, Connection conn) throws SQLException, IOException {
