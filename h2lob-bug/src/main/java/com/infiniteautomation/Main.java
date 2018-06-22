@@ -10,8 +10,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -75,6 +77,15 @@ public class Main {
             }
         }
     
+        //Show the missing LOB error from using LOB_TIMEOUT=0;
+        conn = pool.getConnection();
+        ResultSet rs = conn.createStatement().executeQuery("SELECT data FROM test WHERE id=" + id);
+        rs.next();
+        Blob blob = (Blob)rs.getObject(1);
+        //This line will throw IOException of Missing lob entry...
+        Object obj = blob.getBytes(1, (int) blob.length());
+        conn.close();
+        
         pool.dispose();
     }
     
