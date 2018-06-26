@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.h2.jdbcx.JdbcDataSource;
+import org.h2.tools.Server;
 
 /**
  * Example to show how the database size grows dramatically from updating a longblob column.
@@ -29,6 +30,7 @@ import org.h2.jdbcx.JdbcDataSource;
  */
 public class Main {
     protected static final File baseTestDir = new File("junit");
+    protected static final int LOB_TIMEOUT = 25;
     
     public static void main(String[] args) throws SQLException, IOException, InterruptedException {
         
@@ -45,6 +47,9 @@ public class Main {
         conn.setAutoCommit(true);
         conn.createStatement().executeUpdate("CREATE TABLE test (id int NOT NULL auto_increment, data longblob, PRIMARY KEY (id));");
         conn.close();
+        
+        Server web = Server.createWebServer(new String[] {"-webPort", "8091", "-ifExists"});
+        web.start();
         
         //Get a handle on the file to check its size later
         File dbFile = new File(baseTestDir, "databases" + File.separator + "h2-test.h2.db");
@@ -67,10 +72,11 @@ public class Main {
         rtData.put("RT_DATA", data);
         
         //Update the row and watch the database size grow during runtime
-        for(int i=0; i<200; i++) {
+        for(int i=0; i<2000; i++) {
             for(Entry<Integer, Long> entry : data.entrySet())
                 entry.setValue(entry.getValue() + 1L);
             updateRow(id, rtData, pool.getConnection());
+            Thread.sleep(LOB_TIMEOUT  + 1);
             if(i%10 == 0) {
                 System.out.println(bytesDescription(new File(baseTestDir, "databases" + File.separator + "h2-test.h2.db").length()));
             }
@@ -83,6 +89,8 @@ public class Main {
         blob.getBytes(1, (int) blob.length());
         conn.close();
         
+        web.stop();
+        
         //Size before close of db (~36MB)
         System.out.println(bytesDescription(dbFile.length()));
         pool.dispose();
@@ -91,7 +99,7 @@ public class Main {
     }
     
     public static String getUrl() {
-        return "jdbc:h2:" + baseTestDir.getAbsolutePath() + "/databases/h2-test;MV_STORE=FALSE";
+        return "jdbc:h2:" + baseTestDir.getAbsolutePath() + "/databases/h2-test;MV_STORE=FALSE;LOB_TIMEOUT=" + LOB_TIMEOUT;
     }
 
     public static void updateRow(int id, Map<String, Object> rtData, Connection conn) throws SQLException, IOException {
