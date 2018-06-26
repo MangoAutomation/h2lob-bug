@@ -29,7 +29,7 @@ public class FailToOpen {
         
         delete(baseTestDir);
         //Copy the old db created with 1.4.196
-        File oldDb = new File(new File("data"), "mah2.h2.db");
+        File oldDb = new File(new File("data"), "ht-test.h2.db");
         File databases = new File(baseTestDir, "databases");
         databases.mkdirs();
         File newDb = new File(databases, "h2-test.h2.db");
@@ -47,7 +47,7 @@ public class FailToOpen {
              
         //Open a connection and make a query
         Connection conn = pool.getConnection();
-        ResultSet rs = conn.createStatement().executeQuery("SELECT COUNT(1) FROM INFORMATION_SCHEMA.TABLES WHERE table_name='USERS' AND table_schema='PUBLIC'");
+        ResultSet rs = conn.createStatement().executeQuery("SELECT COUNT(1) FROM INFORMATION_SCHEMA.TABLES WHERE table_name='DATAPOINTS' AND table_schema='PUBLIC'");
         while(rs.next()) {
             System.out.println("count: " + rs.getInt(1));
         }
