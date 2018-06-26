@@ -5,12 +5,15 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>H2 lob Bug Example</name>
   <description>Example of database expansion when updating a LOB column.</description>
-
+  <properties>
+		<compilerSourceVersion>1.8</compilerSourceVersion>
+		<compilerTargetVersion>1.8</compilerTargetVersion>
+  </properties>
   <dependencies>
   		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<version>1.4.197</version>
+			<version>1.4.197-SNAPSHOT</version>
 		</dependency>
   </dependencies>
   <organization>

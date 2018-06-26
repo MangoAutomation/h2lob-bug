@@ -30,7 +30,7 @@ import org.h2.jdbcx.JdbcDataSource;
 public class Main {
     protected static final File baseTestDir = new File("junit");
     
-    public static void main(String[] args) throws SQLException, IOException {
+    public static void main(String[] args) throws SQLException, IOException, InterruptedException {
         
         delete(baseTestDir);
         
@@ -72,25 +72,26 @@ public class Main {
                 entry.setValue(entry.getValue() + 1L);
             updateRow(id, rtData, pool.getConnection());
             if(i%10 == 0) {
-                long dbSize = dbFile.length();
-                System.out.println(bytesDescription(dbSize));
+                System.out.println(bytesDescription(new File(baseTestDir, "databases" + File.separator + "h2-test.h2.db").length()));
             }
         }
     
-        //Show the missing LOB error from using LOB_TIMEOUT=0;
         conn = pool.getConnection();
         ResultSet rs = conn.createStatement().executeQuery("SELECT data FROM test WHERE id=" + id);
         rs.next();
         Blob blob = (Blob)rs.getObject(1);
-        //This line will throw IOException of Missing lob entry...
-        Object obj = blob.getBytes(1, (int) blob.length());
+        blob.getBytes(1, (int) blob.length());
         conn.close();
         
+        //Size before close of db (~36MB)
+        System.out.println(bytesDescription(dbFile.length()));
         pool.dispose();
+        //Size after close (~319k)
+        System.out.println(bytesDescription(dbFile.length()));
     }
     
     public static String getUrl() {
-        return "jdbc:h2:" + baseTestDir.getAbsolutePath() + "/databases/h2-test;LOB_TIMEOUT=0;MV_STORE=FALSE";
+        return "jdbc:h2:" + baseTestDir.getAbsolutePath() + "/databases/h2-test;MV_STORE=FALSE";
     }
 
     public static void updateRow(int id, Map<String, Object> rtData, Connection conn) throws SQLException, IOException {
