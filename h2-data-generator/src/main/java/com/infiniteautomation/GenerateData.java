@@ -48,7 +48,8 @@ public static void main(String[] args) throws SQLException, IOException, Interru
     
     public static String getCreateDataSourcesSQL() {
         return "CREATE TABLE dataSources (\n" + 
-                "  id int NOT NULL auto_increment,\n" + 
+                "  id int NOT NULL auto_increment,\n" +
+                "  value int NOT NULL,\n" +
                 "  PRIMARY KEY (id)\n" + 
                 ");\n";
     }
@@ -57,6 +58,7 @@ public static void main(String[] args) throws SQLException, IOException, Interru
         return "CREATE TABLE dataPoints (\n" + 
                 "  id int NOT NULL auto_increment,\n" + 
                 "dataSourceId int NOT NULL,\n" + 
+                "  value int NOT NULL,\n" +
                 "  PRIMARY KEY (id)\n" + 
                 ");\n" + 
                 "ALTER TABLE dataPoints ADD CONSTRAINT dataPointsFk1 FOREIGN KEY (dataSourceId) REFERENCES dataSources(id);\n";
