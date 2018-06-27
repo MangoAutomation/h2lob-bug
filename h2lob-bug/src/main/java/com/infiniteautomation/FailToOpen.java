@@ -29,7 +29,7 @@ public class FailToOpen {
         
         delete(baseTestDir);
         //Copy the old db created with 1.4.196
-        File oldDb = new File(new File("data"), "ht-test.h2.db");
+        File oldDb = new File(new File("data"), "h2-test.h2.db");
         File databases = new File(baseTestDir, "databases");
         databases.mkdirs();
         File newDb = new File(databases, "h2-test.h2.db");
